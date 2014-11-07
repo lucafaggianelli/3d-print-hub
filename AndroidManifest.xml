@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tesladocet.threedprinting"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+        	android:name=".ThreeDPrintOptionsActivity"
+            android:exported="true"
+            android:permission="android.permission.START_PRINT_SERVICE_CONFIG_ACTIVITY">
+        </activity>
+        
+        <service android:name=".ThreeDPrintService"
+				android:permission="android.permission.BIND_PRINT_SERVICE">
+		    <intent-filter>
+		        <action android:name="android.printservice.PrintService" />
+		    </intent-filter>
+		</service>
+		
+        <meta-data
+            android:name="android.printservice"
+            android:resource="@xml/printservice">
+        </meta-data>
+    </application>
+
+</manifest>
