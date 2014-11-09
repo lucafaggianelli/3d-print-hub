@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView android:id="@+id/color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Color: Blue"/>
+    
+    <TextView android:id="@+id/material"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Material: PLA"/>
+
+    <RelativeLayout
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
+    	
+    	<View android:id="@+id/filament"
+        	android:layout_height="fill_parent"
+        	android:layout_width="15dp"
+        	android:layout_centerInParent="true"/>
+    	
+    	<View
+        	android:layout_height="fill_parent"
+        	android:layout_width="15dp"
+        	android:layout_centerInParent="true"
+        	android:background="@drawable/filament"/>
+    	
+    </RelativeLayout>
+    
+</LinearLayout>

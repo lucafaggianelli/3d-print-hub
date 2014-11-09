@@ -3,9 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
+    <TextView android:id="@+id/hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Touch to pick a file..."
+        android:textSize="16sp"
+        android:gravity="center_vertical|center_horizontal"
+        android:onClick="showFilePicker"
+        android:clickable="true" />
+    
 	<FrameLayout android:id="@+id/stlFrameLayout"
 	    android:layout_height="match_parent"
-	    android:layout_width="match_parent" >
+	    android:layout_width="match_parent"
+	    android:visibility="gone" >
 	    
 	</FrameLayout>
     
