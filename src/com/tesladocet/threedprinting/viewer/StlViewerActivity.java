@@ -19,15 +19,26 @@ public class StlViewerActivity extends Activity {
 	
 	private StlView stlView = null;
 	
+	private FrameLayout stlFrameLayout;
+	private TextView hintView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stl);
 		
+		stlFrameLayout = (FrameLayout) findViewById(R.id.stlFrameLayout);
+		hintView = (TextView) findViewById(R.id.hint);
+		
 		Uri stlUri = getIntent().getData();
 		
 		if (stlUri != null) {
+			hintView.setVisibility(View.GONE);
+			stlFrameLayout.setVisibility(View.VISIBLE);
 			setUpViews(stlUri);
+		} else {
+			hintView.setVisibility(View.VISIBLE);
+			stlFrameLayout.setVisibility(View.GONE);
 		}
 	}
 	
@@ -36,7 +47,8 @@ public class StlViewerActivity extends Activity {
 		super.onResume();
 		if (stlView != null) {
 			Log.i(TAG, "onResume");
-			StlRenderer.requestRedraw();
+			//stlRenderer.requestRedraw();
+			stlView.requestRender();
 			stlView.onResume();
 		}
 	}
@@ -85,9 +97,11 @@ public class StlViewerActivity extends Activity {
 	    switch (requestCode) {
 	        case FILE_SELECT_REQUEST:
 	        if (resultCode == RESULT_OK) {
-	            // Get the Uri of the selected file
 	            Uri uri = data.getData();
 	            Log.d(TAG, "Chosen file: " + uri.toString());
+	            hintView.setVisibility(View.GONE);
+				stlFrameLayout.setVisibility(View.VISIBLE);
+				setUpViews(uri);
 	        }
 	        break;
 	    }

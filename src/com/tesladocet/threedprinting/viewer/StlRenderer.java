@@ -9,6 +9,7 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.graphics.Color;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.util.Log;
@@ -25,10 +26,11 @@ public class StlRenderer implements Renderer {
 	public float positionY = 0f;
 	public float distanceZ = 100f;
 	
-	public static float red;
-	public static float green;
-	public static float blue;
-	public static float alpha;
+	float red;
+	float green;
+	float blue;
+	float alpha;
+	
 	public static boolean displayAxes = true;
 	public static boolean displayGrids = true;
 	private static int bufferCounter = 2;
@@ -39,10 +41,17 @@ public class StlRenderer implements Renderer {
 		this.stlObject = stlObject;
 	}
 
-	public static void requestRedraw() {
+	public void requestRedraw() {
 		bufferCounter = FRAME_BUFFER_COUNT;
 	}
 
+	public void setColor(float r, float g, float b, float a) {
+		red = r;
+		green = g;
+		blue = b;
+		alpha = a;
+	}
+	
 	private void drawGrids(GL10 gl) {
 		List<Float> lineList = new ArrayList<Float>();
 		
@@ -67,17 +76,17 @@ public class StlRenderer implements Renderer {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineBuffer);
 
 		gl.glLineWidth(1f);
-		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, new float[]{0.5f, 0.5f, 0.5f, 1.0f}, 0);
-		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, new float[]{0.5f, 0.5f, 0.5f, 1.0f}, 0);
+		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 0);
+		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 0);
 		gl.glDrawArrays(GL10.GL_LINES, 0, lineList.size() / 3);
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
-		if (bufferCounter < 1) {
-			return;
-		}
-		bufferCounter--;
+//		if (bufferCounter < 1) {
+//			return;
+//		}
+//		bufferCounter--;
 
 		gl.glLoadIdentity();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -173,16 +182,16 @@ public class StlRenderer implements Renderer {
 			Log.i(TAG, "minZ:" + stlObject.minZ);
 		}
 
-		GLU.gluPerspective(gl, 45f, aspectRatio, 1f, 5000f);// (stlObject.maxZ - stlObject.minZ) * 10f + 100f);
+		GLU.gluPerspective(gl, 45f, aspectRatio, 10f, 500f);// (stlObject.maxZ - stlObject.minZ) * 10f + 100f);
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		GLU.gluLookAt(gl, 0, 0, 100f, 0, 0, 0, 0, 1f, 0);
+		GLU.gluLookAt(gl, 100f, 100f, 100f, 0, 0, 0, -1f, -1f, 1f);
 	}
 	
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-		gl.glClearColor(0f, 0f, 0f, 0.5f);
+		gl.glClearColor(.957f, .957f, .957f, 0.5f);
 
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);

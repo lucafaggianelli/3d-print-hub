@@ -3,6 +3,8 @@ package com.tesladocet.threedprinting.viewer;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.tesladocet.threedprinting.viewer.StlObject.Listener;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -38,20 +40,22 @@ public class StlView extends GLSurfaceView {
 		}
 
 		// Data loading.
-		StlObject stlObject = new StlObject(stlBytes, context);
+		StlObject stlObject = new StlObject(stlBytes, context, new StlObject.Listener() {
+			@Override
+			void onLoaded() {
+				stlRenderer.requestRedraw();
+			}
+		});
 
 		SharedPreferences colorConfig = context.getSharedPreferences("colors", Activity.MODE_PRIVATE);
-		StlRenderer.red = colorConfig.getFloat("red", 0.75f);
-		StlRenderer.green = colorConfig.getFloat("green", 0.75f);
-		StlRenderer.blue = colorConfig.getFloat("blue", 0.75f);
-		StlRenderer.alpha = colorConfig.getFloat("alpha", 0.5f);
 
 		// render: stlObject as null
 		stlRenderer = new StlRenderer(stlObject);
+		stlRenderer.setColor(.03f, .31f, .80f, .75f);
 		setRenderer(stlRenderer);
-		StlRenderer.requestRedraw();
+		stlRenderer.requestRedraw();
 	}
-
+	
 	/**
 	 * @param context
 	 * @return
@@ -77,7 +81,7 @@ public class StlView extends GLSurfaceView {
 	private void changeDistance(float distance) {
 		Log.i(TAG, "distance:" + distance);
 		stlRenderer.distanceZ = distance;
-		StlRenderer.requestRedraw();
+		stlRenderer.requestRedraw();
 		requestRender();
 	}
 
@@ -144,7 +148,7 @@ public class StlView extends GLSurfaceView {
 						stlRenderer.positionX += dx * TOUCH_SCALE_FACTOR / 5;
 						stlRenderer.positionY += dy * TOUCH_SCALE_FACTOR / 5;
 					}
-					StlRenderer.requestRedraw();
+					stlRenderer.requestRedraw();
 					
 					pinchScale = getPinchDistance(event) / pinchStartDistance;
 					changeDistance(pinchStartZ / pinchScale);
@@ -196,7 +200,7 @@ public class StlView extends GLSurfaceView {
 						stlRenderer.positionX += dx * TOUCH_SCALE_FACTOR / 5;
 						stlRenderer.positionY += dy * TOUCH_SCALE_FACTOR / 5;
 					}
-					StlRenderer.requestRedraw();
+					stlRenderer.requestRedraw();
 					requestRender();
 				}
 				break;

@@ -18,6 +18,7 @@ public class StlObject {
 	
 	private final static String TAG = "StlObj";
 	
+	Listener listener;
 	byte[] stlBytes = null;
 	List<Float> normalList;
 	FloatBuffer triangleBuffer;
@@ -43,8 +44,9 @@ public class StlObject {
 		return progressDialog;
 	}
 	
-	public StlObject(byte[] stlBytes, Context context) {
+	public StlObject(byte[] stlBytes, Context context, Listener l) {
 		this.stlBytes = stlBytes;
+		listener = l;
 		
 		processSTL(stlBytes, context);
 	}
@@ -245,7 +247,7 @@ public class StlObject {
 				triangleBuffer.put(vertexArray);
 				triangleBuffer.position(0);
 				
-				StlRenderer.requestRedraw();
+				listener.onLoaded();
 
 				progressDialog.dismiss();
 			}
@@ -279,5 +281,9 @@ public class StlObject {
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, i * 3, 3);
 		}
 
+	}
+	
+	abstract static class Listener {
+		abstract void onLoaded();
 	}
 }
