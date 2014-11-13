@@ -2,5 +2,7 @@
 <resources>
     <string name="app_name">3D Printing</string>
     
-    <string name="action_stl_viewer">STL Viewer</string>
+    <string name="action_stl_viewer">3D Viewer</string>
+    <string name="action_stl_info">Info</string>
+    <string name="action_stl_print">Print</string>
 </resources>

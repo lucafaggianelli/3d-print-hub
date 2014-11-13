@@ -10,13 +10,12 @@
         android:textSize="16sp"
         android:gravity="center_vertical|center_horizontal"
         android:onClick="showFilePicker"
-        android:clickable="true" />
-    
+        android:clickable="true"
+        android:visibility="gone" />
+
 	<FrameLayout android:id="@+id/stlFrameLayout"
 	    android:layout_height="match_parent"
 	    android:layout_width="match_parent"
-	    android:visibility="gone" >
-	    
-	</FrameLayout>
-    
+	    android:visibility="visible" >
+	</FrameLayout>    
 </RelativeLayout>

@@ -1,16 +1,19 @@
 package com.tesladocet.threedprinting.viewer;
 
 import com.tesladocet.threedprinting.R;
+import com.tesladocet.threedprinting.utils.FilePicker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class StlViewerActivity extends Activity {
 	
@@ -76,20 +79,20 @@ public class StlViewerActivity extends Activity {
 		}
 	}
 	
-	public void showFilePicker(View v) {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT); 
-	    intent.setType("application/sla");
-	    intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-	    try {
-	        startActivityForResult(
-	                Intent.createChooser(intent, "Select a File to Upload"), 
-	                FILE_SELECT_REQUEST);
-	    } catch (android.content.ActivityNotFoundException ex) {
-	        // Potentially direct the user to the Market with a Dialog
-	        Toast.makeText(this, "Please install a File Manager", 
-	                Toast.LENGTH_LONG).show();
-	    }
+	public void showFilePicker(View v) {	    
+	    FilePicker filePicker = new FilePicker(this,
+    		new FilePicker.SimpleFileDialogListener() {
+                @Override
+                public void onChosenDir(String chosenDir) {
+                    Log.d(TAG, "Chosen file: " + chosenDir);
+                    hintView.setVisibility(View.GONE);
+    				stlFrameLayout.setVisibility(View.VISIBLE);
+    				setUpViews(Uri.parse("file://" + chosenDir));
+                }
+            }
+        );
+	    filePicker.setType(FilePicker.FILE_OPEN, true);
+	    filePicker.launch();
 	}
 	
 	@Override
@@ -106,5 +109,39 @@ public class StlViewerActivity extends Activity {
 	        break;
 	    }
 	    super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	private AlertDialog getDialog() {		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("STL Info");
+		String[] items = new String[] {
+				"Volume: " + (stlView.getStlObject().volume/1000) + " cm^3"
+		};
+		builder.setItems(items, null);
+
+		return builder.create();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.stl_viewer, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		
+		switch (id) {
+		
+		case R.id.action_stl_info:
+			getDialog().show();
+			return true;
+		
+		case R.id.action_stl_print:
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

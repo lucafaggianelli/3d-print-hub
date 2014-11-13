@@ -18,11 +18,13 @@ public class StlObject {
 	
 	private final static String TAG = "StlObj";
 	
-	Listener listener;
-	byte[] stlBytes = null;
-	List<Float> normalList;
-	FloatBuffer triangleBuffer;
+	private Listener listener;
+	private byte[] stlBytes = null;
+	private List<Float> normalList;
+	private FloatBuffer triangleBuffer;
 	
+	public float volume;
+	public int trianglesCount;
 	public float maxX;
 	public float maxY;
 	public float maxZ;
@@ -120,12 +122,15 @@ public class StlObject {
 
 			List<Float> processText(String stlText) throws Exception {
 				List<Float> vertexList = new ArrayList<Float>();
+				float[][] tri = new float[3][];
 				normalList.clear();
+				volume = 0;
 
 				String[] stlLines = stlText.split("\n");
 				
 				progressDialog.setMax(stlLines.length);
 				
+				int j = 0;
 				for (int i = 0; i < stlLines.length; i++) {
 					String string = stlLines[i].trim();
 					if (string.startsWith("facet normal ")) {
@@ -136,6 +141,7 @@ public class StlObject {
 						normalList.add(Float.parseFloat(normalValue[2]));
 						Log.i(TAG, "normal add");
 					}
+					
 					if (string.startsWith("vertex ")) {
 						string = string.replaceFirst("vertex ", "");
 						String[] vertexValue = string.split(" ");
@@ -146,7 +152,9 @@ public class StlObject {
 						vertexList.add(x);
 						vertexList.add(y);
 						vertexList.add(z);
-						Log.i(TAG, "vertex add");
+						tri[j++] = new float[] {x,y,z};
+						if (j == 3) volume += signedVolumeOfTriangle(tri[0], tri[1], tri[2]);
+						j %= 3;
 					}
 					
 					if (i % (stlLines.length / 50) == 0) {
@@ -159,13 +167,16 @@ public class StlObject {
 			
 			List<Float> processBinary(byte[] stlBytes) throws Exception {
 				List<Float> vertexList = new ArrayList<Float>();
+				float[] p1,p2,p3;
 				normalList.clear();
+				volume = 0;
 				
-				int vectorSize = getIntWithLittleEndian(stlBytes, 80);
-				Log.i(TAG, "vectorSize:" + vectorSize);
+				// Header size is 80bytes
+				trianglesCount = getIntWithLittleEndian(stlBytes, 80);
+				Log.i(TAG, "vectorSize:" + trianglesCount);
 				
-				progressDialog.setMax(vectorSize);
-				for (int i = 0; i < vectorSize; i++) {
+				progressDialog.setMax(trianglesCount);
+				for (int i = 0; i < trianglesCount; i++) {
 					normalList.add(Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50)));
 					normalList.add(Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 4)));
 					normalList.add(Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 8)));
@@ -177,6 +188,7 @@ public class StlObject {
 					vertexList.add(x);
 					vertexList.add(y);
 					vertexList.add(z);
+					p1 = new float[] {x,y,z};
 					
 					x = Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 24));
 					y = Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 28));
@@ -185,6 +197,7 @@ public class StlObject {
 					vertexList.add(x);
 					vertexList.add(y);
 					vertexList.add(z);
+					p2 = new float[] {x,y,z};
 					
 					x = Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 36));
 					y = Float.intBitsToFloat(getIntWithLittleEndian(stlBytes, 84 + i * 50 + 40));
@@ -193,8 +206,11 @@ public class StlObject {
 					vertexList.add(x);
 					vertexList.add(y);
 					vertexList.add(z);
+					p3 = new float[] {x,y,z};
 					
-					if (i % (vectorSize / 50) == 0) {
+					volume += signedVolumeOfTriangle(p1, p2, p3);
+					
+					if (i % (trianglesCount / 50) == 0) {
 						publishProgress(i);
 					}
 				}
@@ -230,8 +246,10 @@ public class StlObject {
 			@Override
 			protected void onPostExecute(List<Float> vertexList) {
 				
-				Log.i(TAG, "normalList.size:" + normalList.size());
-				Log.i(TAG, "vertexList.size:" + vertexList.size());
+				Log.i(TAG, "normalList.size: " + normalList.size());
+				Log.i(TAG, "vertexList.size: " + vertexList.size());
+				Log.i(TAG, "triangles: " + trianglesCount);
+				Log.i(TAG, "volume (mm^3): " + volume);
 				
 				if (normalList.size() < 1 || vertexList.size() < 1) {
 					//Toast.makeText(context, context.getString(R.string.error_fetch_data), Toast.LENGTH_LONG).show();
@@ -260,6 +278,24 @@ public class StlObject {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Compute the volume of a tetrahedron in mm^3
+	 * @param p1
+	 * @param p2
+	 * @param p3
+	 * @return
+	 */
+	private float signedVolumeOfTriangle(float[] p1, float[] p2, float[] p3) {
+		float v321 = p3[0]*p2[1]*p1[2];
+		float v231 = p2[0]*p3[1]*p1[2];
+		float v312 = p3[0]*p1[1]*p2[2];
+		float v132 = p1[0]*p3[1]*p2[2];
+		float v213 = p2[0]*p1[1]*p3[2];
+		float v123 = p1[0]*p2[1]*p3[2];
+		
+		return (1f/6f) * (-v321 + v231 + v312 - v132 - v213 + v123);
 	}
 	
 	private float[] listToFloatArray(List<Float> list) {

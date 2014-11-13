@@ -21,6 +21,7 @@ public class StlView extends GLSurfaceView {
 	
 	private StlRenderer stlRenderer;
 	private Uri uri;
+	private StlObject stlObject;
 
 	public StlView(Context context, Uri uri) {
 		super(context);
@@ -40,7 +41,7 @@ public class StlView extends GLSurfaceView {
 		}
 
 		// Data loading.
-		StlObject stlObject = new StlObject(stlBytes, context, new StlObject.Listener() {
+		stlObject = new StlObject(stlBytes, context, new StlObject.Listener() {
 			@Override
 			void onLoaded() {
 				stlRenderer.requestRedraw();
@@ -54,6 +55,10 @@ public class StlView extends GLSurfaceView {
 		stlRenderer.setColor(.03f, .31f, .80f, .75f);
 		setRenderer(stlRenderer);
 		stlRenderer.requestRedraw();
+	}
+	
+	public StlObject getStlObject() {
+		return stlObject;
 	}
 	
 	/**
