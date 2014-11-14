@@ -3,13 +3,13 @@ package com.tesladocet.threedprinting.viewer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.graphics.Color;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.util.Log;
@@ -20,8 +20,8 @@ public class StlRenderer implements Renderer {
 	
 	public static final int FRAME_BUFFER_COUNT = 2;
 	
-	public float angleX;
-	public float angleY;
+	public float angleX = -75;
+	public float angleY = 0;
 	public float positionX = 0f;
 	public float positionY = 0f;
 	public float distanceZ = 100f;
@@ -31,7 +31,7 @@ public class StlRenderer implements Renderer {
 	float blue;
 	float alpha;
 	
-	public static boolean displayAxes = true;
+	public static boolean displayAxes = false;
 	public static boolean displayGrids = true;
 	private static int bufferCounter = 2;
 
@@ -54,21 +54,22 @@ public class StlRenderer implements Renderer {
 	
 	private void drawGrids(GL10 gl) {
 		List<Float> lineList = new ArrayList<Float>();
-		
-		for (int x = -100; x <= 100; x += 5) {
-			lineList.add((float) x);
-			lineList.add(-100f);
+
+		for (float x = -stlObject.sizeX; x <= stlObject.sizeX; x += 5) {
+			lineList.add(x);
+			lineList.add(-stlObject.sizeX);
 			lineList.add(0f);
-			lineList.add((float)x);
-			lineList.add(100f);
+			lineList.add(x);
+			lineList.add(stlObject.sizeX);
 			lineList.add(0f);
 		}
-		for (int y = -100; y <= 100; y += 5) {
-			lineList.add(-100f);
-			lineList.add((float) y);
+
+		for (float y = stlObject.sizeY; y <= stlObject.sizeY; y += 5) {
+			lineList.add(-stlObject.sizeY);
+			lineList.add(y);
 			lineList.add(0f);
-			lineList.add(100f);
-			lineList.add((float) y);
+			lineList.add(stlObject.sizeY);
+			lineList.add(y);
 			lineList.add(0f);
 		}
 
@@ -79,6 +80,13 @@ public class StlRenderer implements Renderer {
 		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 0);
 		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 0);
 		gl.glDrawArrays(GL10.GL_LINES, 0, lineList.size() / 3);
+		
+		Rectangle plane = new Rectangle();
+		gl.glPushMatrix();
+		gl.glTranslatex(0, 0, 1);
+	    gl.glScalef(stlObject.maxX-stlObject.minX, stlObject.maxY-stlObject.minY, 1);
+	    plane.draw(gl);
+	    gl.glPopMatrix();
 	}
 
 	@Override
@@ -95,13 +103,17 @@ public class StlRenderer implements Renderer {
 
 		// rotation and apply Z-axis
 		if (stlObject != null) {
-			gl.glTranslatef(-(stlObject.maxY + stlObject.minY) / 2, -(stlObject.maxX + stlObject.minX) / 2, -(stlObject.maxZ + stlObject.minZ) - distanceZ);
+			gl.glTranslatef(
+					-(stlObject.maxY + stlObject.minY) / 2, 
+					-(stlObject.maxX + stlObject.minX) / 2, 
+					-(stlObject.maxZ + stlObject.minZ) - distanceZ);
 		} else {
 			gl.glTranslatef(0, 0, -distanceZ);
 		}
-		gl.glRotatef(angleX, 0, 1, 0);
-		gl.glRotatef(angleY, 1, 0, 0);
-
+		
+		gl.glRotatef(angleX, 1, 0, 0);
+		gl.glRotatef(angleY, 0, 1, 0);
+		
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
@@ -135,10 +147,13 @@ public class StlRenderer implements Renderer {
 
 		// draw object
 		if (stlObject != null) {
+			gl.glPushMatrix();
+			gl.glTranslatex(0, 0, 2);
 			// FIXME transparency applying does not correctly
 			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, new float[] { 0.75f, 0.75f, 0.75f, 0.95f }, 0);
 			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, new float[] { red, green, blue, alpha }, 0);
 			stlObject.draw(gl);
+			gl.glPopMatrix();
 		}
 	}
 	
@@ -209,5 +224,48 @@ public class StlRenderer implements Renderer {
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, new float[]{0.3f, 0.3f, 0.3f, 0.85f}, 0);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, new float[]{1f, 1f, 1f, 0.75f}, 0);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, new float[] { 0f, 0f, 1000f, 1f }, 0); // light comes above of screen
+	}
+	
+	public class Rectangle {
+
+	    private float vertices[] = {
+	        -1.0f, 1.0f, 0.0f,
+	        -1.0f,-1.0f,0.0f,
+	        1.0f,-1.0f,0.0f,
+	        1.0f,1.0f,0.0f
+	    };
+	    
+	    private short[] indices = {0,1,2,0,2,3};
+
+	    private FloatBuffer vertexBuffer;
+	    private ShortBuffer indexBuffer;
+
+	    public Rectangle(){
+	        ByteBuffer vbb  = ByteBuffer.allocateDirect(vertices.length * 4);
+	        vbb.order(ByteOrder.nativeOrder());
+	        vertexBuffer = vbb.asFloatBuffer();
+	        vertexBuffer.put(vertices);
+	        vertexBuffer.position(0);
+
+	        ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
+	        ibb.order(ByteOrder.nativeOrder());
+	        indexBuffer = ibb.asShortBuffer();
+	        indexBuffer.put(indices);
+	        indexBuffer.position(0);
+	    }
+
+	    public void draw(GL10 gl){
+	        gl.glFrontFace(GL10.GL_CCW);
+//	        gl.glEnable(GL10.GL_CULL_FACE);
+//	        gl.glCullFace(GL10.GL_BACK);
+//	        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+	        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+	        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, new float[] { 0.75f, 0.75f, 0.75f, 1 }, 0);
+			gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, new float[] { 0, 0.40f, 0.75f, 1 }, 0);
+	        gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
+//	        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+//	        gl.glDisable(GL10.GL_CULL_FACE);
+	    }
+
 	}
 }

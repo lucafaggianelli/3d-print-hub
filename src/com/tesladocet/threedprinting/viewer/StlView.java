@@ -54,7 +54,7 @@ public class StlView extends GLSurfaceView {
 		stlRenderer = new StlRenderer(stlObject);
 		stlRenderer.setColor(.03f, .31f, .80f, .75f);
 		setRenderer(stlRenderer);
-		stlRenderer.requestRedraw();
+		//stlRenderer.requestRedraw();
 	}
 	
 	public StlObject getStlObject() {

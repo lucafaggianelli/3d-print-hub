@@ -31,6 +31,9 @@ public class StlObject {
 	public float minX;
 	public float minY;
 	public float minZ;
+	public float sizeX;
+	public float sizeY;
+	public float sizeZ;
 
 	private ProgressDialog prepareProgressDialog(Context context) {
 		ProgressDialog progressDialog = new ProgressDialog(context);
@@ -265,6 +268,9 @@ public class StlObject {
 				triangleBuffer.put(vertexArray);
 				triangleBuffer.position(0);
 				
+				sizeX = maxX - minX;
+				sizeY = maxY - minY;
+				sizeZ = maxZ - minZ;
 				listener.onLoaded();
 
 				progressDialog.dismiss();
