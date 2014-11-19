@@ -212,6 +212,7 @@ public class StlView extends GLSurfaceView {
 			
 			// end drag
 			case MotionEvent.ACTION_UP:
+				performClick();
 				if (touchMode == TOUCH_DRAG) {
 					touchMode = TOUCH_NONE;
 					break;
@@ -221,6 +222,16 @@ public class StlView extends GLSurfaceView {
 		return true;
 	}
 
+	@Override
+	public boolean performClick() {
+		// Calls the super implementation, which generates an AccessibilityEvent
+		// and calls the onClick() listener on the view, if any
+		super.performClick();
+	
+		// Handle the action for the custom click here
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param event

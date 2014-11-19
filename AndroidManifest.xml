@@ -40,6 +40,25 @@
         </activity>
         
         <activity 
+            android:name="com.tesladocet.threedprinting.gcode.GcodeViewerActivity"
+            android:label="GCode Viewer">
+            
+            <intent-filter>
+			    <action android:name="android.intent.action.VIEW"/>
+			    <category android:name="android.intent.category.DEFAULT"/>
+			    <category android:name="android.intent.category.BROWSABLE"/>
+			    <!-- gcode files -->
+			    <data android:scheme="file" />
+		        <data android:mimeType="*/*" />
+		        <data android:pathPattern=".*\\.gco" />
+		        <data android:pathPattern=".*\\.gcode" />
+		        <data android:pathPattern=".*\\.nc" />
+		        <data android:pathPattern=".*\\.ngc" />
+		        <data android:host="*" />
+			</intent-filter>
+        </activity>
+        
+        <activity 
             android:name="com.tesladocet.threedprinting.Browser"
             android:label="3D Browser"
             android:exported="true" >
@@ -47,8 +66,8 @@
 	        <intent-filter>
 				<action android:name="android.intent.action.VIEW"></action>
 				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="http" android:host="www.thingiverse.com"></data>
+<!-- 				<category android:name="android.intent.category.BROWSABLE"></category> -->
+<!-- 				<data android:scheme="http" android:host="www.thingiverse.com"></data> -->
 			</intent-filter>
         </activity>
         

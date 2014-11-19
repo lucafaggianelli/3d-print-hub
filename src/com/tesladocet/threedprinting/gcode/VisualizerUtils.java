@@ -50,10 +50,10 @@ public class VisualizerUtils {
      * Returns the maximum side dimension of a box containing two points.
      */
     static float findMaxSide(Point3f min, Point3f max) {
-        double x = Math.abs(min.x) + Math.abs(max.x);
-        double y = Math.abs(min.y) + Math.abs(max.y);
-        double z = Math.abs(min.z) + Math.abs(max.z);
-        return (float) Math.max(x, Math.max(y, z));
+        float x = Math.abs(min.x) + Math.abs(max.x);
+        float y = Math.abs(min.y) + Math.abs(max.y);
+        float z = Math.abs(min.z) + Math.abs(max.z);
+        return Math.max(x, Math.max(y, z));
     }
 
     /**
@@ -107,6 +107,7 @@ public class VisualizerUtils {
         while ((line = fileStream.readLine()) != null) {
             vect.add(line);
         }
+        fileStream.close();
 
         return vect;
     }

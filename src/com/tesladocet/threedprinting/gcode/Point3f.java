@@ -34,4 +34,9 @@ public class Point3f {
 		y *= s;
 		z *= s;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("x: %.3f y: %.3f z: %.3f", x,y,z);
+	}
 }

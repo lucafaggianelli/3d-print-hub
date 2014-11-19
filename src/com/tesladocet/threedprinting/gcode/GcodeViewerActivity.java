@@ -25,67 +25,79 @@
 
 package com.tesladocet.threedprinting.gcode;
 
+import com.tesladocet.threedprinting.R;
+
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  *
  * @author wwinder
  */
-public class GcodeVisualizer extends Activity implements ControllerListener {
+public class GcodeViewerActivity extends Activity implements ControllerListener {
 
-    private static final int FPS = 20; // animator's target frames per second
-
+	private final static String TAG = "GCViewer";
+	
     // Interactive members.
-    private Point3d machineCoordinate;
-    private Point3d workCoordinate;
+    private Point3f machineCoordinate;
+    private Point3f workCoordinate;
     private int completedCommandNumber = -1;
     private String gcodeFile = null;
-    private VisualizerCanvas canvas = null;
+    private GcodeView gcodeView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	setContentView(R.layout.gcode_viewer);
     	
         // Create the OpenGL rendering canvas
-        this.canvas = new VisualizerCanvas();
-
+        gcodeView = (GcodeView) findViewById(R.id.gcode_view);
+        
+        Uri file = getIntent().getData();
+        if (file != null) {
+        	Log.d(TAG, "file: " + file.toString());
+        	Log.d(TAG, "path: " + file.getPath());
+        	setGcodeFile(file.getPath());
+        	//context.getContentResolver().openInputStream(uri);
+        }
     }
 
     public void setGcodeFile(String file) {
-        this.gcodeFile = file;
-        canvas.setGcodeFile(this.gcodeFile);
+        gcodeFile = file;
+        gcodeView.setGcodeFile(gcodeFile);
     }
     
     public void setCompletedCommandNumber(int num) {
-        this.completedCommandNumber = num;
-        this.canvas.setCurrentCommandNumber(num);
+        completedCommandNumber = num;
+        gcodeView.renderer.setCurrentCommandNumber(num);
     }
 
     public double getMinArcLength() {
-        return this.canvas.getMinArcLength();
+        return gcodeView.renderer.getMinArcLength();
     }
 
-    public void setMinArcLength(double minArcLength) {
-        this.canvas.setMinArcLength(minArcLength);
+    public void setMinArcLength(float minArcLength) {
+        gcodeView.renderer.setMinArcLength(minArcLength);
     }
 
     public double getArcLength() {
-        return  this.canvas.getArcLength();
+        return  gcodeView.renderer.getArcLength();
     }
 
-    public void setArcLength(double arcLength) {
-        this.canvas.setArcLength(arcLength);
+    public void setArcLength(float arcLength) {
+        gcodeView.renderer.setArcLength(arcLength);
     }
 
     @Override
-    public void statusStringListener(String state, Point3d machineCoord, Point3d workCoord) {
+    public void statusStringListener(String state, Point3f machineCoord, Point3f workCoord) {
         machineCoordinate = machineCoord;
         workCoordinate = workCoord;
         
         // Give coordinates to canvas.
-        this.canvas.setMachineCoordinate(this.machineCoordinate);
-        this.canvas.setWorkCoordinate(this.workCoordinate);
+        gcodeView.renderer.setMachineCoordinate(this.machineCoordinate);
+        gcodeView.renderer.setWorkCoordinate(this.workCoordinate);
     }
 
 	@Override

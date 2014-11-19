@@ -52,7 +52,7 @@ public interface ControllerListener {
     /**
      * Controller status information.
      */
-    void statusStringListener(String state, Point3d machineCoord, Point3d workCoord);
+    void statusStringListener(String state, Point3f machineCoord, Point3f workCoord);
     
     /**
      * Data gathered while preprocessing commands for queue.
