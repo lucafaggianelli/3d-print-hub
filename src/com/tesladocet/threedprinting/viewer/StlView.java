@@ -198,8 +198,8 @@ public class StlView extends GLSurfaceView {
 					previousY = y;
 					
 					if (isRotate) {
-						stlRenderer.angleX += dx * TOUCH_SCALE_FACTOR;
-						stlRenderer.angleY += dy * TOUCH_SCALE_FACTOR;
+						stlRenderer.angleX += dy * TOUCH_SCALE_FACTOR;
+						stlRenderer.angleY += dx * TOUCH_SCALE_FACTOR;
 					} else {
 						// change view point
 						stlRenderer.positionX += dx * TOUCH_SCALE_FACTOR / 5;
@@ -229,7 +229,7 @@ public class StlView extends GLSurfaceView {
 	private float getPinchDistance(MotionEvent event) {
 		float x = event.getX(0) - event.getX(1);
 		float y = event.getY(0) - event.getY(1);
-		return android.util.FloatMath.sqrt(x * x + y * y);
+		return (float) Math.sqrt(x * x + y * y);
 	}
 
 	/**

@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
+import android.opengl.Matrix;
 import android.util.Log;
 
 public class StlRenderer implements Renderer {
@@ -22,6 +23,7 @@ public class StlRenderer implements Renderer {
 	
 	public float angleX = -75;
 	public float angleY = 0;
+	public float[] axis = new float[3];
 	public float positionX = 0f;
 	public float positionY = 0f;
 	public float distanceZ = 100f;
@@ -104,15 +106,15 @@ public class StlRenderer implements Renderer {
 		// rotation and apply Z-axis
 		if (stlObject != null) {
 			gl.glTranslatef(
-					-(stlObject.maxY + stlObject.minY) / 2, 
 					-(stlObject.maxX + stlObject.minX) / 2, 
+					-(stlObject.maxY + stlObject.minY) / 2, 
 					-(stlObject.maxZ + stlObject.minZ) - distanceZ);
 		} else {
 			gl.glTranslatef(0, 0, -distanceZ);
 		}
 		
-		gl.glRotatef(angleX, 1, 0, 0);
 		gl.glRotatef(angleY, 0, 1, 0);
+		gl.glRotatef(angleX, 1, 0, 0);
 		
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		

@@ -25,6 +25,9 @@ public class StlViewerActivity extends Activity {
 	private FrameLayout stlFrameLayout;
 	private TextView hintView;
 	
+	private MenuItem itemInfo;
+	private MenuItem itemPrint;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +52,6 @@ public class StlViewerActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		if (stlView != null) {
-			Log.i(TAG, "onResume");
 			//stlRenderer.requestRedraw();
 			stlView.requestRender();
 			stlView.onResume();
@@ -60,7 +62,6 @@ public class StlViewerActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		if (stlView != null) {
-			Log.i(TAG, "onPause");
 			stlView.onPause();
 		}
 	}
@@ -72,8 +73,9 @@ public class StlViewerActivity extends Activity {
 			
 			FrameLayout relativeLayout = (FrameLayout) findViewById(R.id.stlFrameLayout);
 			stlView = new StlView(this, uri);
-			Log.d(TAG,"stlview null? " + (stlView==null));
 			relativeLayout.addView(stlView);
+			itemInfo.setEnabled(true);
+			itemPrint.setEnabled(true);
 		} else {
 			Log.d(TAG, "URI is null");
 		}
@@ -84,7 +86,6 @@ public class StlViewerActivity extends Activity {
     		new FilePicker.SimpleFileDialogListener() {
                 @Override
                 public void onChosenDir(String chosenDir) {
-                    Log.d(TAG, "Chosen file: " + chosenDir);
                     hintView.setVisibility(View.GONE);
     				stlFrameLayout.setVisibility(View.VISIBLE);
     				setUpViews(Uri.parse("file://" + chosenDir));
@@ -95,21 +96,21 @@ public class StlViewerActivity extends Activity {
 	    filePicker.launch();
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    switch (requestCode) {
-	        case FILE_SELECT_REQUEST:
-	        if (resultCode == RESULT_OK) {
-	            Uri uri = data.getData();
-	            Log.d(TAG, "Chosen file: " + uri.toString());
-	            hintView.setVisibility(View.GONE);
-				stlFrameLayout.setVisibility(View.VISIBLE);
-				setUpViews(uri);
-	        }
-	        break;
-	    }
-	    super.onActivityResult(requestCode, resultCode, data);
-	}
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//	    switch (requestCode) {
+//	        case FILE_SELECT_REQUEST:
+//	        if (resultCode == RESULT_OK) {
+//	            Uri uri = data.getData();
+//	            Log.d(TAG, "Chosen file: " + uri.toString());
+//	            hintView.setVisibility(View.GONE);
+//				stlFrameLayout.setVisibility(View.VISIBLE);
+//				setUpViews(uri);
+//	        }
+//	        break;
+//	    }
+//	    super.onActivityResult(requestCode, resultCode, data);
+//	}
 	
 	private AlertDialog getDialog() {		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -126,6 +127,10 @@ public class StlViewerActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.stl_viewer, menu);
+		itemInfo = menu.findItem(R.id.action_stl_info);
+		itemPrint = menu.findItem(R.id.action_stl_print);
+		itemInfo.setEnabled(false);
+		itemPrint.setEnabled(false);
 		return true;
 	}
 	
