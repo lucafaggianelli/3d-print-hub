@@ -15,7 +15,7 @@ public class Printer3D implements Parcelable {
 	
 	private String type;
 	private String technology;
-	private PrinterOptions options;
+	private PrintAttributes attributes;
 	private Link link;
 	
 	private int status;
@@ -51,12 +51,12 @@ public class Printer3D implements Parcelable {
 		this.location = location;
 	}
 
-	public PrinterOptions getOptions() {
-		return options;
+	public PrintAttributes getAttributes() {
+		return attributes;
 	}
 
-	public void setOptions(PrinterOptions options) {
-		this.options = options;
+	public void setAttributes(PrintAttributes attributes) {
+		this.attributes = attributes;
 	}
 
 	public int getStatus() {

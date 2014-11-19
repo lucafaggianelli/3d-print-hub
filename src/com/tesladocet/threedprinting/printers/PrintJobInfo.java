@@ -136,9 +136,6 @@ public final class PrintJobInfo implements Parcelable {
     /** Reason for the print job being in its current state. */
     private String mStateReason;
 
-    /** The pages to print */
-    private int[] mPageRanges;
-
     /** The print job attributes size. */
     private PrintAttributes mAttributes;
 
@@ -168,7 +165,6 @@ public final class PrintJobInfo implements Parcelable {
         mCreationTime = other.mCreationTime;
         mCopies = other.mCopies;
         mStateReason = other.mStateReason;
-        mPageRanges = other.mPageRanges;
         mAttributes = other.mAttributes;
         mDocumentInfo = other.mDocumentInfo;
         mCanceling = other.mCanceling;
@@ -186,13 +182,6 @@ public final class PrintJobInfo implements Parcelable {
         mCreationTime = parcel.readLong();
         mCopies = parcel.readInt();
         mStateReason = parcel.readString();
-        Parcelable[] parcelables = parcel.readParcelableArray(null);
-        if (parcelables != null) {
-            mPageRanges = new PageRange[parcelables.length];
-            for (int i = 0; i < parcelables.length; i++) {
-                mPageRanges[i] = (PageRange) parcelables[i];
-            }
-        }
         mAttributes = (PrintAttributes) parcel.readParcelable(null);
         mDocumentInfo = (PrintDocumentInfo) parcel.readParcelable(null);
         mCanceling = (parcel.readInt() == 1);
@@ -204,7 +193,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @return The id.
      */
-    public PrintJobId getId() {
+    public String getId() {
         return mId;
     }
 
@@ -215,7 +204,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @hide
      */
-    public void setId(PrintJobId id) {
+    public void setId(String id) {
         this.mId = id;
     }
 
@@ -244,7 +233,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @return The target printer id.
      */
-    public PrinterId getPrinterId() {
+    public String getPrinterId() {
         return mPrinterId;
     }
 
@@ -255,7 +244,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @hide
      */
-    public void setPrinterId(PrinterId printerId) {
+    public void setPrinterId(String printerId) {
         mPrinterId = printerId;
     }
 
@@ -424,26 +413,6 @@ public final class PrintJobInfo implements Parcelable {
     }
 
     /**
-     * Gets the included pages.
-     *
-     * @return The included pages or <code>null</code> if not set.
-     */
-    public PageRange[] getPages() {
-        return mPageRanges;
-    }
-
-    /**
-     * Sets the included pages.
-     *
-     * @param pageRanges The included pages.
-     *
-     * @hide
-     */
-    public void setPages(PageRange[] pageRanges) {
-        mPageRanges = pageRanges;
-    }
-
-    /**
      * Gets the print job attributes.
      *
      * @return The attributes.
@@ -579,9 +548,9 @@ public final class PrintJobInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeParcelable(mId, flags);
+        parcel.writeString(mId);
         parcel.writeString(mLabel);
-        parcel.writeParcelable(mPrinterId, flags);
+        parcel.writeString(mPrinterId);
         parcel.writeString(mPrinterName);
         parcel.writeInt(mState);
         parcel.writeInt(mAppId);
@@ -589,7 +558,6 @@ public final class PrintJobInfo implements Parcelable {
         parcel.writeLong(mCreationTime);
         parcel.writeInt(mCopies);
         parcel.writeString(mStateReason);
-        parcel.writeParcelableArray(mPageRanges, flags);
         parcel.writeParcelable(mAttributes, flags);
         parcel.writeParcelable(mDocumentInfo, 0);
         parcel.writeInt(mCanceling ? 1 : 0);
@@ -612,8 +580,6 @@ public final class PrintJobInfo implements Parcelable {
         builder.append(", documentInfo: " + (mDocumentInfo != null
                 ? mDocumentInfo.toString() : null));
         builder.append(", cancelling: " + mCanceling);
-        builder.append(", pages: " + (mPageRanges != null
-                ? Arrays.toString(mPageRanges) : null));
         builder.append(", hasAdvancedOptions: " + (mAdvancedOptions != null));
         builder.append("}");
         return builder.toString();
@@ -683,15 +649,6 @@ public final class PrintJobInfo implements Parcelable {
          */
         public void setAttributes(PrintAttributes attributes) {
             mPrototype.mAttributes = attributes;
-        }
-
-        /**
-         * Sets the included pages.
-         *
-         * @param pages The included pages.
-         */
-        public void setPages(PageRange[] pages) {
-            mPrototype.mPageRanges = pages;
         }
 
         /**

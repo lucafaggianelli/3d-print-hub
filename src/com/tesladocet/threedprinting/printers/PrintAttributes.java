@@ -5,7 +5,7 @@ import java.util.List;
 import android.graphics.Color;
 import android.util.ArrayMap;
 
-public class PrinterOptions {
+public class PrintAttributes {
 	
 	public final static int UOM_METRIC = 0;
 	public final static int UOM_INCHES = 1;
@@ -20,7 +20,32 @@ public class PrinterOptions {
 	BuildVolume volume;
 	List<Resolution> resolutions;
 	ArrayMap<Material,Color> extruders;
+	int uom = UOM_METRIC;
 	
+	public BuildVolume getVolume() {
+		return volume;
+	}
+
+	public void setVolume(BuildVolume volume) {
+		this.volume = volume;
+	}
+
+	public List<Resolution> getResolutions() {
+		return resolutions;
+	}
+
+	public void addResolution(Resolution res) {
+		this.resolutions.add(res);
+	}
+
+	public ArrayMap<Material, Color> getExtruders() {
+		return extruders;
+	}
+
+	public void setExtruders(ArrayMap<Material, Color> extruders) {
+		this.extruders = extruders;
+	}
+
 	public static class Material {
 		String id, label;
 		
@@ -30,7 +55,7 @@ public class PrinterOptions {
 		}
 	}
 	
-	public class Resolution {
+	public static class Resolution {
 		float x,y,z;
 		
 		public Resolution(float x, float y, float z) {
@@ -40,7 +65,7 @@ public class PrinterOptions {
 		}
 	}
 	
-	public class BuildVolume {
+	public static class BuildVolume {
 		float x,y,z;
 		
 		public BuildVolume(float x, float y, float z) {

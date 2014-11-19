@@ -74,8 +74,8 @@ public class StlViewerActivity extends Activity {
 			FrameLayout relativeLayout = (FrameLayout) findViewById(R.id.stlFrameLayout);
 			stlView = new StlView(this, uri);
 			relativeLayout.addView(stlView);
-			itemInfo.setEnabled(true);
-			itemPrint.setEnabled(true);
+			itemInfo.setVisible(true);
+			itemPrint.setVisible(true);
 		} else {
 			Log.d(TAG, "URI is null");
 		}
@@ -129,8 +129,8 @@ public class StlViewerActivity extends Activity {
 		getMenuInflater().inflate(R.menu.stl_viewer, menu);
 		itemInfo = menu.findItem(R.id.action_stl_info);
 		itemPrint = menu.findItem(R.id.action_stl_print);
-		itemInfo.setEnabled(false);
-		itemPrint.setEnabled(false);
+		itemInfo.setVisible(false);
+		itemPrint.setVisible(false);
 		return true;
 	}
 	
