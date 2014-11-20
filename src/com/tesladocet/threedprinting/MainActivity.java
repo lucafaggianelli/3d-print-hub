@@ -83,13 +83,14 @@ public class MainActivity extends Activity {
 	          convertView = LayoutInflater.from(getContext()).inflate(
 	        		  R.layout.item_printer, parent, false);
 	       }
-	       // Lookup view for data population
+
 	       TextView title = (TextView) convertView.findViewById(R.id.title);
-	       TextView desc = (TextView) convertView.findViewById(R.id.description);
-	       // Populate the data into the template view using the data object
+	       TextView status = (TextView) convertView.findViewById(R.id.status);
+	       
+	       
 	       title.setText(printer.getName());
-	       desc.setText(printer.getDescription());
-	       // Return the completed view to render on screen
+	       status.setText(""+printer.getStatus());
+
 	       return convertView;
 	   }
 	}

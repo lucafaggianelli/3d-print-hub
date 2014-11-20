@@ -3,6 +3,7 @@ package com.tesladocet.threedprinting.printers;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.print.PrintJobId;
 
 import java.util.Arrays;
 
@@ -107,7 +108,7 @@ public final class PrintJobInfo implements Parcelable {
     public static final int STATE_CANCELED = 7;
 
     /** The unique print job id. */
-    private String mId;
+    private PrintJobId mId;
 
     /** The human readable print job label. */
     private String mLabel;
@@ -140,7 +141,7 @@ public final class PrintJobInfo implements Parcelable {
     private PrintAttributes mAttributes;
 
     /** Information about the printed document. */
-    private PrintDocumentInfo mDocumentInfo;
+    private String mDocumentInfo; // TODO ModelInfo or GCode
 
     /** Advanced printer specific options. */
     private Bundle mAdvancedOptions;
@@ -183,7 +184,7 @@ public final class PrintJobInfo implements Parcelable {
         mCopies = parcel.readInt();
         mStateReason = parcel.readString();
         mAttributes = (PrintAttributes) parcel.readParcelable(null);
-        mDocumentInfo = (PrintDocumentInfo) parcel.readParcelable(null);
+        mDocumentInfo = parcel.readString();
         mCanceling = (parcel.readInt() == 1);
         mAdvancedOptions = parcel.readBundle();
     }
@@ -193,7 +194,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @return The id.
      */
-    public String getId() {
+    public PrintJobId getId() {
         return mId;
     }
 
@@ -204,7 +205,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @hide
      */
-    public void setId(String id) {
+    public void setId(PrintJobId id) {
         this.mId = id;
     }
 
@@ -439,7 +440,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @hide
      */
-    public PrintDocumentInfo getDocumentInfo() {
+    public String getDocumentInfo() {
         return mDocumentInfo;
     }
 
@@ -450,7 +451,7 @@ public final class PrintJobInfo implements Parcelable {
      *
      * @hide
      */
-    public void setDocumentInfo(PrintDocumentInfo info) {
+    public void setDocumentInfo(String info) {
         mDocumentInfo = info;
     }
 
@@ -548,7 +549,7 @@ public final class PrintJobInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(mId);
+        parcel.writeParcelable(mId, flags);
         parcel.writeString(mLabel);
         parcel.writeString(mPrinterId);
         parcel.writeString(mPrinterName);
@@ -558,8 +559,8 @@ public final class PrintJobInfo implements Parcelable {
         parcel.writeLong(mCreationTime);
         parcel.writeInt(mCopies);
         parcel.writeString(mStateReason);
-        parcel.writeParcelable(mAttributes, flags);
-        parcel.writeParcelable(mDocumentInfo, 0);
+        //parcel.writeParcelable(mAttributes, flags);
+        parcel.writeString(mDocumentInfo);
         parcel.writeInt(mCanceling ? 1 : 0);
         parcel.writeBundle(mAdvancedOptions);
     }
@@ -569,7 +570,7 @@ public final class PrintJobInfo implements Parcelable {
         StringBuilder builder = new StringBuilder();
         builder.append("PrintJobInfo{");
         builder.append("label: ").append(mLabel);
-        builder.append(", id: ").append(mId);
+        builder.append(", id: ").append(mId.toString());
         builder.append(", state: ").append(stateToString(mState));
         builder.append(", printer: " + mPrinterId);
         builder.append(", tag: ").append(mTag);

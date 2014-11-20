@@ -1,13 +1,16 @@
 package com.tesladocet.threedprinting.viewer;
 
 import com.tesladocet.threedprinting.R;
+import com.tesladocet.threedprinting.printers.PrintModelAdapter;
 import com.tesladocet.threedprinting.utils.FilePicker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +22,8 @@ public class StlViewerActivity extends Activity {
 	
 	private final static String TAG = "StlViewer";
 	private final static int FILE_SELECT_REQUEST = 0;
+	
+	private PrintManager printManager;
 	
 	private StlView stlView = null;
 	
@@ -46,6 +51,8 @@ public class StlViewerActivity extends Activity {
 			hintView.setVisibility(View.VISIBLE);
 			stlFrameLayout.setVisibility(View.GONE);
 		}
+		
+		printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
 	}
 	
 	@Override
@@ -145,6 +152,9 @@ public class StlViewerActivity extends Activity {
 			return true;
 		
 		case R.id.action_stl_print:
+			Log.d(TAG, "Need to print");
+			String jobName = getString(R.string.app_name) + " Model";
+			printManager.print(jobName, new PrintModelAdapter(), null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

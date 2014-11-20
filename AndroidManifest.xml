@@ -58,18 +58,18 @@
 			</intent-filter>
         </activity>
         
-        <activity 
-            android:name="com.tesladocet.threedprinting.Browser"
-            android:label="3D Browser"
-            android:exported="true" >
+<!--         <activity  -->
+<!--             android:name="com.tesladocet.threedprinting.Browser" -->
+<!--             android:label="3D Browser" -->
+<!--             android:exported="true" > -->
             
-	        <intent-filter>
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-<!-- 				<category android:name="android.intent.category.BROWSABLE"></category> -->
-<!-- 				<data android:scheme="http" android:host="www.thingiverse.com"></data> -->
-			</intent-filter>
-        </activity>
+<!-- 	        <intent-filter> -->
+<!-- 				<action android:name="android.intent.action.VIEW"></action> -->
+<!-- 				<category android:name="android.intent.category.DEFAULT"></category> -->
+<!--  				<category android:name="android.intent.category.BROWSABLE"></category> -->
+<!--  				<data android:scheme="http" android:host="www.thingiverse.com"></data> -->
+<!-- 			</intent-filter> -->
+<!--         </activity> -->
         
         <activity 
             android:name=".PrinterDetails"
