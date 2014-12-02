@@ -41,7 +41,15 @@ public class StlViewerActivity extends Activity {
 		stlFrameLayout = (FrameLayout) findViewById(R.id.stlFrameLayout);
 		hintView = (TextView) findViewById(R.id.hint);
 		
-		Uri stlUri = getIntent().getData();
+		Intent intent = getIntent();
+		String action = intent.getAction();
+		
+		if (action.equals(Intent.ACTION_SEND) || 
+				action.equals(Intent.ACTION_SEND_MULTIPLE)) {
+			
+		}
+		
+		Uri stlUri = intent.getData();
 		
 		if (stlUri != null) {
 			hintView.setVisibility(View.GONE);

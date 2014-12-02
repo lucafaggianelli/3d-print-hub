@@ -32,6 +32,8 @@
             
             <intent-filter>
 			    <action android:name="android.intent.action.VIEW"/>
+			    <action android:name="android.intent.action.SEND"/>
+			    <action android:name="android.intent.action.SEND_MULTIPLE"/>
 			    <category android:name="android.intent.category.DEFAULT"/>
 			    <category android:name="android.intent.category.BROWSABLE"/>
 			    <!-- .stl files -->
@@ -45,6 +47,8 @@
             
             <intent-filter>
 			    <action android:name="android.intent.action.VIEW"/>
+			    <action android:name="android.intent.action.SEND"/>
+			    <action android:name="android.intent.action.SEND_MULTIPLE"/>
 			    <category android:name="android.intent.category.DEFAULT"/>
 			    <category android:name="android.intent.category.BROWSABLE"/>
 			    <!-- gcode files -->
